@@ -44,7 +44,7 @@ grid-template-columns:repeat(6,60px);
 gap:15px;
 justify-content:center;
 margin:30px auto;
-max-width:420px;
+max-width:320px;
 }
 
 .letter{
@@ -60,7 +60,7 @@ font-weight:bold;
 
 background:white;
 border:3px solid #333;
-border-radius:50%;
+border-radius:12px;
 
 cursor:pointer;
 user-select:none;
@@ -172,9 +172,12 @@ function createLetters(){
 const circle=document.getElementById("circle")
 circle.innerHTML=""
 
-let shuffled=[...letters]
-shuffle(shuffled)
- 
+let word = shuffledQuiz[currentQuiz].en
+
+let letters = word.split("")
+
+shuffle(letters)
+
 letters.forEach((l)=>{
 
 let div=document.createElement("div")
@@ -223,6 +226,7 @@ document.getElementById("current").innerText=""
 
 document.querySelectorAll(".letter").forEach(l=>{
 l.classList.remove("active")
+l.classList.remove("correct")
 })
 
 }
@@ -315,4 +319,5 @@ alert("Time up! Score: "+score)
 </body>
 
 </html>
+
 
