@@ -256,18 +256,20 @@ if(currentQuiz>=shuffledQuiz.length){
 alert("全問クリア！")
 gameActive=false
 return
-
 }
 
+resetLetters()
 showQuestion()
-
+createLetters()
 },400)
 
-}
+}else{
 
 resetLetters()
 
 }
+}
+
 // ===== 問題表示 =====
 
 function showQuestion(){
@@ -319,5 +321,6 @@ alert("Time up! Score: "+score)
 </body>
 
 </html>
+
 
 
