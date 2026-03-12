@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Past Tense Word Game</title>
+
+<style>
+
+body{
+font-family:Arial;
+text-align:center;
+background:#eef2f7;
+}
+
+#question{
+font-size:32px;
+margin:20px;
+font-weight:bold;
+}
+
+#timer{
+font-size:38px;
+color:red;
+}
+
+#score{
+font-size:24px;
+margin-bottom:10px;
+}
+
+#circle{
+position:relative;
+width:320px;
+height:320px;
+margin:30px auto;
+border-radius:50%;
+}
+
+.letter{
+
+position:absolute;
+width:60px;
+height:60px;
+
+line-height:60px;
+text-align:center;
+
+font-size:28px;
+font-weight:bold;
+
+background:white;
+border:3px solid #333;
+border-radius:50%;
+
+cursor:pointer;
+user-select:none;
+
+}
+
+.letter.active{
+background:#7ed6df;
+}
+
+#current{
+font-size:34px;
+height:40px;
+margin:20px;
+}
+
+button{
+font-size:20px;
+padding:10px 20px;
+margin:10px;
+}
+
+</style>
+
+</head>
+
+<body>
+
+<h1>Past Tense Game</h1>
+
+<div id="timer">40</div>
+<div id="score">Score: 0</div>
+
+<div id="question">STARTを押してください</div>
+
+<button onclick="startGame()">START</button>
+
+<div id="current"></div>
+
+<div id="circle"></div>
+
+<button onclick="checkAnswer()">Check</button>
+<button onclick="resetLetters()">Reset</button>
+
+<script>
+
+// ===== 問題 =====
+
+const quiz = [
+
+{jp:"readの過去形", en:"READ"},
+{jp:"writeの過去形", en:"WROTE"},
+{jp:"speakの過去形", en:"SPOKE"},
+{jp:"tellの過去形", en:"TOLD"},
+{jp:"giveの過去形", en:"GAVE"},
+{jp:"teachの過去形", en:"TAUGHT"},
+{jp:"getの過去形", en:"GOT"},
+{jp:"takeの過去形", en:"TOOK"},
+{jp:"haveの過去形", en:"HAD"},
+{jp:"makeの過去形", en:"MADE"},
+{jp:"seeの過去形", en:"SAW"},
+{jp:"buyの過去形", en:"BOUGHT"},
+{jp:"thinkの過去形", en:"THOUGHT"},
+{jp:"goの過去形", en:"WENT"},
+{jp:"comeの過去形", en:"CAME"}
+
+]
+
+// ===== 文字生成 =====
+
+const letters=[...new Set(quiz.map(q=>q.en).join("").split(""))]
+
+// ===== 状態 =====
+
+let currentWord=""
+let score=0
+let time=40
+let timer=null
+let gameActive=false
+
+let shuffledQuiz=[]
+let currentQuiz=0
+
+// ===== シャッフル =====
+
+function shuffle(array){
+
+for(let i=array.length-1;i>0;i--){
+
+let j=Math.floor(Math.random()*(i+1))
+let temp=array[i]
+array[i]=array[j]
+array[j]=temp
+
+}
+
+}
+
+// ===== 円形配置 =====
+
+function createLetters(){
+
+const circle=document.getElementById("circle")
+circle.innerHTML=""
+
+let radius=130
+let center=160
+
+letters.forEach((l,i)=>{
+
+let angle=(i/letters.length)*Math.PI*2
+
+let x=center+radius*Math.cos(angle)-30
+let y=center+radius*Math.sin(angle)-30
+
+let div=document.createElement("div")
+
+div.className="letter"
+div.innerText=l
+
+div.style.left=x+"px"
+div.style.top=y+"px"
+
+div.onclick=()=>selectLetter(div)
+
+circle.appendChild(div)
+
+})
+
+}
+
+// ===== 文字選択 =====
+
+function selectLetter(el){
+
+if(!gameActive)return
+
+if(el.classList.contains("active"))return
+
+el.classList.add("active")
+
+currentWord+=el.innerText
+
+document.getElementById("current").innerText=currentWord
+
+ let answer = shuffledQuiz[currentQuiz].en;
+
+  if(currentWord.length === answer.length){
+      checkAnswer();
+
+
+}
+
+// ===== リセット =====
+
+function resetLetters(){
+
+currentWord=""
+document.getElementById("current").innerText=""
+
+document.querySelectorAll(".letter").forEach(l=>{
+l.classList.remove("active")
+})
+
+}
+
+// ===== 回答チェック =====
+
+function checkAnswer(){
+
+let answer=shuffledQuiz[currentQuiz].en
+
+if(currentWord.toUpperCase()==answer){
+
+score++
+
+document.getElementById("score").innerText="Score: "+score
+
+currentQuiz++
+
+if(currentQuiz>=shuffledQuiz.length){
+
+alert("全問クリア！")
+gameActive=false
+return
+
+}
+
+showQuestion()
+
+}
+
+resetLetters()
+
+}
+
+// ===== 問題表示 =====
+
+function showQuestion(){
+
+document.getElementById("question").innerText=shuffledQuiz[currentQuiz].jp
+
+}
+
+// ===== ゲーム開始 =====
+
+function startGame(){
+
+score=0
+time=40
+gameActive=true
+
+document.getElementById("score").innerText="Score: 0"
+document.getElementById("timer").innerText=time
+
+shuffledQuiz=[...quiz]
+shuffle(shuffledQuiz)
+
+currentQuiz=0
+
+showQuestion()
+
+createLetters()
+
+timer=setInterval(()=>{
+
+time--
+document.getElementById("timer").innerText=time
+
+if(time<=0){
+
+clearInterval(timer)
+gameActive=false
+
+alert("Time up! Score: "+score)
+
+}
+
+},1000)
+
+}
+
+</script>
+
+</body>
+</html>
